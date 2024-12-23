@@ -1,0 +1,5 @@
+boto3==1.*
+chardet==5.*
+pandas==2.*
+openpyxl==3.*
+xmltodict==0.*

@@ -1,0 +1,21 @@
+[project]
+name = "aws_handler"
+version = "0.1.0-beta.1"
+authors = [
+  { name = "José Daniel Montoya Salazar", email = "jd.montoya.s8@gmail.com" },
+]
+description = "A Python library providing utility functions when working with AWS services."
+readme = "README.md"
+requires-python = ">=3.13"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/Joseda8/aws-handler"
+Issues = "https://github.com/Joseda8/aws-handler/issues"
+
+[tool.black]
+line-length = 79
