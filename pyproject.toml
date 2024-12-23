@@ -19,3 +19,8 @@ Issues = "https://github.com/Joseda8/aws-handler/issues"
 
 [tool.black]
 line-length = 79
+
+# Explicitly define modules for setuptools to use
+[tool.setuptools]
+packages = ["aws_handler"]
+
