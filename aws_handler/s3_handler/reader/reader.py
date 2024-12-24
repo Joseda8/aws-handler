@@ -16,6 +16,7 @@ class S3Reader:
         """
         Initialize a S3Reader object.
 
+
         :param bucket: The name of the S3 bucket.
         """
         # Init arguments

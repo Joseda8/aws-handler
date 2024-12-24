@@ -68,6 +68,12 @@ The AWS-Handler currently utilizes a Boto3 connection to interact with AWS servi
 Install the dependencies in the requirements files.
 
 ```sh
-pip3 install -r requirements.txt
-pip3 install -r requirements-dev.txt
+pip3 install -r project_settings/python/requirements.txt
+pip3 install -r project_settings/python/requirements-dev.txt
+```
+
+Install the Git hooks:
+
+```sh
+pre-commit install --config project_settings/git/.pre-commit-config.yaml
 ```
