@@ -1,6 +1,6 @@
 [project]
 name = "aws_handler"
-version = "0.1.0-beta.2"
+version = "0.1.0-beta.3"
 authors = [
   { name = "José Daniel Montoya Salazar", email = "jd.montoya.s8@gmail.com" },
 ]
