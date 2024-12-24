@@ -34,7 +34,7 @@ jobs:
     - name: Check PEP8 compliance
       run: |
         # Run flake8 on all Python files in the repository
-        find . -name "*.py" | xargs flake8 --ignore=E203
+        find . -name "*.py" | xargs flake8 --ignore=E203,W503
 
   Publish:
     # Use the latest Ubuntu runner for the job
