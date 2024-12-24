@@ -51,7 +51,8 @@ class UrlFile:
         """
         Convert the UrlFile object to a dictionary representation.
 
-        :return: A dictionary with keys: 'file_extension', 'last_modified', 's3_url', and 'file_name'.
+        :return: A dictionary with keys:
+            'file_extension', 'last_modified', 's3_url', and 'file_name'.
         """
         return {
             "file_extension": self._file_extension,
@@ -81,5 +82,6 @@ class UrlFile:
         """
         return (
             f"s3_url: {self._s3_url}, last_modified: {self._last_modified}, "
-            f"file_name: {self._file_name}, file_extension: {self._file_extension}"
+            f"file_name: {self._file_name}, "
+            f"file_extension: {self._file_extension}"
         )

@@ -6,7 +6,7 @@ def detect_encoding_from_bytes(bytes, chunk_size=1024):
     Detect the encoding of bytes data.
 
     :param bytes: The bytes data to detect the encoding from.
-    :param chunk_size: The size of each chunk to feed into the encoding detector.
+    :param chunk_size: Chunk size to feed into the encoding detector.
 
     :return: The detected encoding.
     """

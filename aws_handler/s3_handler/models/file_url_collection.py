@@ -44,8 +44,8 @@ class UrlFileCollection:
 
     def order_files_by_last_modified_or_name(self):
         """
-        Order the list of UrlFile instances for each keyword
-        based on last_modified or name if last_modified is the same.
+        Order the list of UrlFile instances for each keyword based on
+        last_modified or name if last_modified is the same.
         """
         self._url_file_objects = sorted(
             self._url_file_objects,
@@ -55,8 +55,7 @@ class UrlFileCollection:
 
     def order_files_by_name(self):
         """
-        Order the list of UrlFile instances for each keyword
-        based on name.
+        Order the list of UrlFile instances for each keyword based on name.
         """
         self._url_file_objects = sorted(
             self._url_file_objects,
@@ -66,7 +65,8 @@ class UrlFileCollection:
 
     def get_latest_file(self) -> "UrlFileCollection":
         """
-        Get a UrlFileCollection with the UrlFile with latest last_modified property.
+        Get a UrlFileCollection with the UrlFile with latest last_modified
+        property.
 
         :return: The UrlFileCollection with the latest last_modified property.
         :raises: ValueError if the list is empty (length is 0).
@@ -85,7 +85,8 @@ class UrlFileCollection:
 
     def get_file_by_name_keyword(self, keyword: str) -> List[UrlFile]:
         """
-        Get a list of UrlFile instances that have the given keyword in their file names.
+        Get a list of UrlFile instances that have the given keyword in their
+        file names.
 
         :param keyword: The keyword to search for in the file names.
         :return: A list of UrlFile instances matching the keyword.
@@ -99,7 +100,8 @@ class UrlFileCollection:
 
     def extend(self, url_file_objects: "UrlFileCollection"):
         """
-        Extend the UrlFileCollection by appending UrlFile instances from another list.
+        Extend the UrlFileCollection by appending UrlFile instances from
+        another list.
 
         :param url_file_objects: List of UrlFile instances to append.
         """
@@ -108,8 +110,8 @@ class UrlFileCollection:
 
     def to_dict_list(self) -> List[dict]:
         """
-        Convert the UrlFileCollection to a list of dictionaries,
-        where each dictionary represents a UrlFile object.
+        Convert the UrlFileCollection to a list of dictionaries, where each
+        dictionary represents a UrlFile object.
 
         :return: A list of dictionaries representing UrlFile objects.
         """
@@ -125,12 +127,14 @@ class UrlFileCollection:
         self, index: Union[int, slice]
     ) -> Union[UrlFile, List[UrlFile]]:
         """
-        Get the UrlFile instance or a list of UrlFile instances from the UrlFileCollection.
+        Get the UrlFile instance or a list of UrlFile instances from the
+        UrlFileCollection.
 
         :param index: The index (or slice) to access the UrlFile(s).
 
         :return: If an int is passed, returns the UrlFile at the given index.
-                 If a slice is passed, returns a new UrlFileCollection containing the sliced UrlFiles.
+                 If a slice is passed, returns a new UrlFileCollection
+                 containing the sliced UrlFiles.
         :raises: IndexError if the index is out of range.
         """
         return self._url_file_objects[index]
@@ -141,7 +145,8 @@ class UrlFileCollection:
 
         :param other: Another UrlFileCollection instance to merge with.
 
-        :return: A new UrlFileCollection instance containing the merged UrlFiles.
+        :return: A new UrlFileCollection instance containing the merged
+                 UrlFiles.
         """
         merged_url_file_objects = (
             self._url_file_objects + other._url_file_objects
@@ -150,8 +155,10 @@ class UrlFileCollection:
 
     def __repr__(self) -> str:
         """
-        Return a string representation of the UrlFileCollection in a list format.
+        Return a string representation of the UrlFileCollection in a list
+        format.
 
-        :return: A string representing the UrlFileCollection as a list of dictionaries.
+        :return: A string representing the UrlFileCollection as a list of
+                 dictionaries.
         """
         return str(self.to_dict_list())

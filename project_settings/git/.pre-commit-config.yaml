@@ -6,3 +6,12 @@ repos:
         language_version: python3
         # Only format Python files
         files: \.py$
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        language_version: python3
+        # Enforce a maximum line length of 79 characters
+        args:
+          - --max-line-length=79
+          - --ignore=E203

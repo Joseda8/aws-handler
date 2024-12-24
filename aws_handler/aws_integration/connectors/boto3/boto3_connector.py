@@ -8,7 +8,7 @@ import botocore
 import botocore.client
 import pandas as pd
 
-from aws_handler.aws_integration.connectors.aws_connector.aws_connector import (
+from aws_handler.aws_integration.connectors.aws_connector import (
     AwsConnector,
 )
 from aws_handler.aws_integration.connectors.boto3.util import (
@@ -44,7 +44,8 @@ class Boto3Connector(AwsConnector):
 
         if "" in keywords:
             log.warning(
-                "S3 being accessed with no filtering, this may result in low performance."
+                "S3 being accessed with no filtering, "
+                " this may result in low performance."
             )
 
         result = {}
@@ -61,12 +62,12 @@ class Boto3Connector(AwsConnector):
         # List all objects (files and folders) within the specified folder
         all_objects = [obj_summary for obj_summary in response["Contents"]]
 
-        # Filter out objects that represent folders (objects with trailing slash "/")
+        # Filter out objects that represent folders
         file_objects = [
             obj for obj in all_objects if not obj["Key"].endswith("/")
         ]
 
-        # Create a dictionary using the file path and its last_modified property
+        # Create a dictionary using the file path and last_modified
         all_files = [
             {
                 "file_path": file["Key"],
@@ -166,11 +167,14 @@ class Boto3Connector(AwsConnector):
                     bucket,
                     key,
                     data_buffer.getvalue(),
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    content_type="application/vnd."
+                    "openxmlformats-officedocument."
+                    "spreadsheetml.sheet",
                 )
             else:
                 raise ValueError(
-                    "Unsupported file format. Only 'csv' and 'excel' are supported."
+                    "Unsupported file format. "
+                    "Only 'csv' and 'excel' are supported."
                 )
         elif isinstance(data, io.BytesIO):
             if file_format == "csv":
@@ -182,15 +186,19 @@ class Boto3Connector(AwsConnector):
                     bucket,
                     key,
                     data.getvalue(),
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    content_type="application/"
+                    "vnd.openxmlformats-officedocument."
+                    "spreadsheetml.sheet",
                 )
             else:
                 raise ValueError(
-                    "Unsupported file format. Only 'csv' and 'excel' are supported."
+                    "Unsupported file format. "
+                    "Only 'csv' and 'excel' are supported."
                 )
         else:
             raise ValueError(
-                "Unsupported data type. Expected Pandas DataFrame or BytesIO buffer."
+                "Unsupported data type. "
+                "Expected Pandas DataFrame or BytesIO buffer."
             )
 
     def put_object_to_s3(
@@ -206,5 +214,7 @@ class Boto3Connector(AwsConnector):
 
     def put_dict_to_s3(self, bucket, key, dict_obj):
         self._s3.put_object(
-            Body=json.dumps(dict_obj).encode("utf-8"), Bucket=bucket, Key=key
+            Body=json.dumps(dict_obj).encode("utf-8"),
+            Bucket=bucket,
+            Key=key,
         )
