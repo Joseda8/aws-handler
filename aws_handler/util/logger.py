@@ -35,7 +35,10 @@ def setup_logger(name, info_only=True):
         class ColoredFormatter(logging.Formatter):
             def format(self, record):
                 levelname = record.levelname
-                record.levelname = f"{LOG_COLORS.get(levelname, '')}{levelname}{LOG_COLOR_RESET}"
+                record.levelname = (
+                    f"{LOG_COLORS.get(levelname, '')}{levelname}"
+                    f"{LOG_COLOR_RESET}"
+                )
                 return super().format(record)
 
         colored_formatter = ColoredFormatter(
@@ -64,7 +67,10 @@ def setup_logger(name, info_only=True):
         class ColoredFormatter(logging.Formatter):
             def format(self, record):
                 levelname = record.levelname
-                record.levelname = f"{LOG_COLORS.get(levelname, '')}{levelname}{LOG_COLOR_RESET}"
+                record.levelname = (
+                    f"{LOG_COLORS.get(levelname, '')}{levelname}"
+                    f"{LOG_COLOR_RESET}"
+                )
                 return super().format(record)
 
         colored_formatter = ColoredFormatter(
