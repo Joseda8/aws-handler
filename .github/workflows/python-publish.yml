@@ -3,10 +3,8 @@ name: Publish Python Package to TestPyPI
 on:
   # Trigger the workflow only for tags pushed to the 'master' branch
   push:
-    branches:
-      - master
     tags:
-      - 'v*'
+      - "*"
 
 jobs:
   Format-validator:
