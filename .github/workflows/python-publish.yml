@@ -9,9 +9,42 @@ on:
       - 'v*'
 
 jobs:
-  publish:
+  Format-validation:
     # Use the latest Ubuntu runner for the job
     runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    # Step 3: Install dependencies (flake8)
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+
+    # Step 4: Check PEP8 compliance on changed files
+    - name: Check PEP8 compliance
+      run: |
+        # Get a list of changed files in the push
+        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+        # Filter Python files and run flake8
+        echo "$changed_files" | grep '\.py$' | xargs flake8
+
+  Publish:
+    # Use the latest Ubuntu runner for the job
+    runs-on: ubuntu-latest
+
+    # Ensure this job runs after flake8 passes
+    needs: Format-validation
 
     environment:
       # Set the environment to 'testpypi'
@@ -28,32 +61,23 @@ jobs:
       with:
         python-version: '3.13'
 
-    # Step 3: Install dependencies (pip, build, twine, and flake8)
+    # Step 3: Install dependencies (pip, build, twine)
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine flake8
+        pip install build twine
 
-    # Step 4: Check PEP8 compliance on changed files
-    - name: Check PEP8 compliance
-      run: |
-        # Get a list of changed files in the push
-        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-
-        # Filter Python files and run flake8
-        echo "$changed_files" | grep '\.py$' | xargs flake8
-
-    # Step 5: Build the Python package
+    # Step 4: Build the Python package
     - name: Build the package
       run: |
         python -m build
 
-    # Step 6: List the contents of the build directory (dist/)
+    # Step 5: List the contents of the build directory (dist/)
     - name: List build directory contents
       run: |
         ls -lh dist/  # List the contents of the 'dist' directory to verify the built files
 
-    # Step 7: Upload the package to TestPyPI
+    # Step 6: Upload the package to TestPyPI
     - name: Publish to TestPyPI
       env:
         # Use credentials stored in GitHub Secrets
