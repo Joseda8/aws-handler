@@ -29,31 +29,8 @@ jobs:
         run: |
           python -m build
 
-      - name: Upload distributions as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-dists
-          path: dist/
-
-  testpypi-publish:
-    runs-on: ubuntu-latest
-    needs:
-      - build-and-publish
-    environment:
-      name: testpypi
-
-    steps:
-      - name: Retrieve release distributions
-        uses: actions/download-artifact@v4
-        with:
-          name: release-dists
-          path: dist/
-
-      - name: Publish release distributions to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist/
+      - name: Upload distributions to TestPyPI manually
+        run: |
+          echo "${{ secrets.TESTPYPI_PASSWORD }}" | python3 -m twine upload --repository testpypi dist/*
         env:
-          PYPI_USERNAME: ${{ secrets.TESTPYPI_USERNAME }}
-          TESTPYPI_PASSWORD: ${{ secrets.TESTPYPI_PASSWORD }}
-          TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+          TWINE_PASSWORD: ${{ secrets.TESTPYPI_PASSWORD }}
