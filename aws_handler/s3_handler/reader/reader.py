@@ -8,10 +8,7 @@ import xmltodict
 import pandas as pd
 
 from aws_handler.aws_integration import aws_connector
-from aws_handler.s3_handler.reader.models.file_url import UrlFile
-from aws_handler.s3_handler.reader.models.file_url_collection import (
-    UrlFileCollection,
-)
+from aws_handler.s3_handler.models import UrlFile, UrlFileCollection
 
 
 class S3Reader:

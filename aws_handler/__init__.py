@@ -1,1 +1,1 @@
-from .s3_handler.reader.reader import S3Reader
+from .s3_handler import S3Reader, S3Writer

@@ -1,8 +1,12 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 import io
+import json
 import re
 
 import boto3
+import botocore
+import botocore.client
+import pandas as pd
 
 from aws_handler.aws_integration.connectors.aws_connector.aws_connector import (
     AwsConnector,
@@ -16,8 +20,18 @@ from aws_handler.util.logger import log
 class Boto3Connector(AwsConnector):
 
     def __init__(self):
-        # Initialize boto3 client once in the constructor
-        self._s3 = boto3.client("s3")
+        # Initialize boto3 client
+        self._s3: botocore.client.S3 = None
+
+        # Start AWS connections
+        self._verify_aws_connection()
+
+    def _verify_aws_connection(self):
+        try:
+            self._s3 = boto3.client("s3")
+            log.debug("AWS Connection Verified.")
+        except Exception as excpt:
+            raise Exception("Failed to verify AWS connection") from excpt
 
     def s3_list_files(
         self,
@@ -81,16 +95,6 @@ class Boto3Connector(AwsConnector):
         raw: bool = False,
         bytes_: bool = False,
     ) -> Tuple[Optional[bytes], Optional[str]]:
-        """
-        Reads a file from S3 and returns its content.
-
-        :param bucket: The S3 bucket name.
-        :param key: The S3 object key.
-        :param code: The encoding to decode the content (default: 'utf-8').
-        :param raw: If True, returns raw bytes.
-        :param bytes_: If True, returns an in-memory BytesIO object.
-        :return: A tuple of (file content, encoding).
-        """
         try:
             # Get the file object from S3
             obj = self._s3.get_object(Bucket=bucket, Key=key)["Body"].read()
@@ -135,3 +139,72 @@ class Boto3Connector(AwsConnector):
                     yield chunk.decode(code), encoding
         except self._s3.exceptions.NoSuchKey:
             return None, None
+
+    def upload_dataframe_to_s3(
+        self,
+        data: Union[pd.DataFrame, io.BytesIO],
+        bucket: str,
+        key: str,
+        file_format: str,
+    ) -> None:
+        if isinstance(data, pd.DataFrame):
+            # Create BytesIO buffer
+            data_buffer = io.BytesIO()
+            if file_format == "csv":
+                data.to_csv(data_buffer, index=False)
+                data_buffer.seek(0)
+                self.put_object_to_s3(
+                    bucket,
+                    key,
+                    data_buffer.getvalue(),
+                    content_type="text/csv",
+                )
+            elif file_format in ["excel", "xlsx", "xls"]:
+                data.to_excel(data_buffer, index=False, engine="xlsxwriter")
+                data_buffer.seek(0)
+                self.put_object_to_s3(
+                    bucket,
+                    key,
+                    data_buffer.getvalue(),
+                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            else:
+                raise ValueError(
+                    "Unsupported file format. Only 'csv' and 'excel' are supported."
+                )
+        elif isinstance(data, io.BytesIO):
+            if file_format == "csv":
+                self.put_object_to_s3(
+                    bucket, key, data.getvalue(), content_type="text/csv"
+                )
+            elif file_format in ["excel", "xlsx", "xls"]:
+                self.put_object_to_s3(
+                    bucket,
+                    key,
+                    data.getvalue(),
+                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            else:
+                raise ValueError(
+                    "Unsupported file format. Only 'csv' and 'excel' are supported."
+                )
+        else:
+            raise ValueError(
+                "Unsupported data type. Expected Pandas DataFrame or BytesIO buffer."
+            )
+
+    def put_object_to_s3(
+        self,
+        bucket: str,
+        key: str,
+        data: bytes,
+        content_type: str = "application/octet-stream",
+    ) -> None:
+        self._s3.put_object(
+            Body=data, Bucket=bucket, Key=key, ContentType=content_type
+        )
+
+    def put_dict_to_s3(self, bucket, key, dict_obj):
+        self._s3.put_object(
+            Body=json.dumps(dict_obj).encode("utf-8"), Bucket=bucket, Key=key
+        )

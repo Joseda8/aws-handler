@@ -1,8 +1,10 @@
+import io
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
+
+import pandas as pd
 
 
-# Interface for AWS S3 connectors
 class AwsS3(ABC):
     @abstractmethod
     def s3_list_files(
@@ -39,6 +41,7 @@ class AwsS3(ABC):
         :param bytes_: If True, returns an in-memory BytesIO object.
         :return: A tuple of (file content, encoding).
         """
+        pass
 
     def s3_read_file_by_chunks(
         self,
@@ -61,3 +64,51 @@ class AwsS3(ABC):
         :return: A generator that yields a tuple of (file content chunk, encoding) for each chunk read,
                 or None if the object does not exist in S3.
         """
+        pass
+
+    @abstractmethod
+    def upload_dataframe_to_s3(
+        self,
+        data: Union[pd.DataFrame, io.BytesIO],
+        bucket: str,
+        key: str,
+        file_format: str,
+    ) -> None:
+        """
+        Uploads a Pandas DataFrame or a BytesIO buffer to Amazon S3.
+
+        :param data: Pandas DataFrame or BytesIO buffer to upload.
+        :param bucket: The name of the S3 bucket.
+        :param key: The key (path) to upload the data to in S3.
+        :param file_format: File format for the uploaded data ("csv" or "excel").
+        """
+        pass
+
+    @abstractmethod
+    def put_object_to_s3(
+        self,
+        bucket: str,
+        key: str,
+        data: bytes,
+        content_type: str = "application/octet-stream",
+    ) -> None:
+        """
+        Uploads an object to Amazon S3.
+
+        :param bucket: The name of the S3 bucket.
+        :param key: The key (path) to upload the object to in S3.
+        :param data: The data to upload.
+        :param content_type: The MIME type of the object being uploaded.
+        """
+        pass
+
+    @abstractmethod
+    def put_dict_to_s3(self, bucket: str, key: str, dict_obj: Dict) -> None:
+        """
+        Uploads a dictionary as a JSON object to Amazon S3.
+
+        :param bucket: The name of the S3 bucket.
+        :param key: The key (path) to upload the dictionary to in S3.
+        :param dict_obj: The dictionary to upload.
+        """
+        pass
