@@ -8,7 +8,13 @@ This package provides out-of-the-box util functions to work with AWS in a more a
 
 ## How to install
 
-This package is not available in the Python Package Index so it must be installed manually by running:
+This package is not available in the Python Package Index but in the test environment. It can be installed with:
+
+```sh
+pip3 install -i https://test.pypi.org/simple/ aws-handler
+```
+
+Or manually from the root of this repo with:
 
 ```sh
 # Install build package
