@@ -83,3 +83,9 @@ Install the Git hooks:
 ```sh
 pre-commit install --config project_settings/git/.pre-commit-config.yaml
 ```
+
+The tests can be run with:
+
+```sh
+python3 -m pytest -s
+```
