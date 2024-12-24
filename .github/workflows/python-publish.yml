@@ -9,7 +9,7 @@ on:
       - 'v*'
 
 jobs:
-  Format-validation:
+  Format-validator:
     # Use the latest Ubuntu runner for the job
     runs-on: ubuntu-latest
 
@@ -30,21 +30,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8
 
-    # Step 4: Check PEP8 compliance on changed files
+    # Step 4: Check PEP8 compliance on all Python files in the repository
     - name: Check PEP8 compliance
       run: |
-        # Get a list of changed files in the push
-        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-
-        # Filter Python files and run flake8
-        echo "$changed_files" | grep '\.py$' | xargs flake8
+        # Run flake8 on all Python files in the repository
+        find . -name "*.py" | xargs flake8
 
   Publish:
     # Use the latest Ubuntu runner for the job
     runs-on: ubuntu-latest
 
-    # Ensure this job runs after flake8 passes
-    needs: Format-validation
+    # Ensure this job runs after Format-validator passes
+    needs: Format-validator
 
     environment:
       # Set the environment to 'testpypi'
@@ -75,7 +72,7 @@ jobs:
     # Step 5: List the contents of the build directory (dist/)
     - name: List build directory contents
       run: |
-        ls -lh dist/  # List the contents of the 'dist' directory to verify the built files
+        ls -lh dist/
 
     # Step 6: Upload the package to TestPyPI
     - name: Publish to TestPyPI
@@ -84,4 +81,4 @@ jobs:
         TWINE_USERNAME: ${{ secrets.TESTPYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.TESTPYPI_PASSWORD }}
       run: |
-        twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose  # Upload the built package to TestPyPI
+        twine upload --repository-url https://test.pypi.org/legacy/ dist/* --verbose
