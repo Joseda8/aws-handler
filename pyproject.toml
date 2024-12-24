@@ -24,3 +24,9 @@ line-length = 79
 [tool.setuptools]
 packages = ["aws_handler"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+filterwarnings = [
+  "ignore:datetime.datetime.utcfromtimestamp:DeprecationWarning",
+  "ignore:.*utcnow\\(\\) is deprecated.*:DeprecationWarning:botocore.auth"
+]

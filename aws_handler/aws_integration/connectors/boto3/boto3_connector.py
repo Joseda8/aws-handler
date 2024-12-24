@@ -8,9 +8,7 @@ import botocore
 import botocore.client
 import pandas as pd
 
-from aws_handler.aws_integration.connectors.aws_connector import (
-    AwsConnector,
-)
+from aws_handler.aws_integration.connectors.aws_connector import AwsConnector
 from aws_handler.aws_integration.connectors.boto3.util import (
     detect_encoding_from_bytes,
 )
@@ -18,13 +16,27 @@ from aws_handler.util.logger import log
 
 
 class Boto3Connector(AwsConnector):
+    # Class variable to store the singleton instance
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        """
+        Ensure that only one instance of the class is created.
+        If an instance already exists, return the existing one.
+        """
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
 
     def __init__(self):
-        # Initialize boto3 client
-        self._s3: botocore.client.S3 = None
-
-        # Start AWS connections
-        self._verify_aws_connection()
+        # Avoid re-initialization
+        if not hasattr(self, "_initialized"):
+            # Initialize boto3 client
+            self._s3: botocore.client.S3 = None
+            # Start AWS connections
+            self._verify_aws_connection()
+            # Mark as initialized
+            self._initialized = True
 
     def _verify_aws_connection(self):
         try:

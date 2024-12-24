@@ -46,6 +46,7 @@ class AwsS3(ABC):
         """
         pass
 
+    @abstractmethod
     def s3_read_file_by_chunks(
         self,
         bucket: str,

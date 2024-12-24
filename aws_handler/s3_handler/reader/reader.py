@@ -7,25 +7,31 @@ import xmltodict
 
 import pandas as pd
 
-from aws_handler.aws_integration import aws_connector
+from aws_handler.aws_integration import AwsConnector, Boto3Connector
 from aws_handler.s3_handler.models import UrlFile, UrlFileCollection
 
 
 class S3Reader:
-    def __init__(self, bucket: str):
+    def __init__(self, bucket: str, aws_connector: AwsConnector = None):
         """
-        Initialize a S3Reader object.
+        Initialize a S3Writer object.
 
         :param bucket: The name of the S3 bucket.
+        :param aws_connector: AWS connector object used for S3 interactions.
         """
         self._bucket = bucket
+        self._aws_connector = (
+            aws_connector if aws_connector else Boto3Connector()
+        )
 
-    def retrieve_files(self, path: str, keywords: List[str]):
+    def retrieve_files(
+        self, path: str, keywords: List[str]
+    ) -> Dict[str, UrlFileCollection]:
         """
         Retrieve file information from S3 and store it as UrlFile instances.
         """
         files_per_keyword: Dict[str, UrlFileCollection] = {}
-        files_path_per_keyword = aws_connector.s3_list_files(
+        files_path_per_keyword = self._aws_connector.s3_list_files(
             bucket=self._bucket, folder=path, keywords=keywords
         )
 
@@ -71,12 +77,12 @@ class S3Reader:
         file_type = file_object.file_extension
 
         if file_type == "json":
-            file_content, _ = aws_connector.s3_read_file(
+            file_content, _ = self._aws_connector.s3_read_file(
                 self._bucket, key=file_path, raw=True
             )
             return json.loads(file_content)
         elif file_type == "csv":
-            file_content, encoding = aws_connector.s3_read_file(
+            file_content, encoding = self._aws_connector.s3_read_file(
                 self._bucket, key=file_path, bytes_=True
             )
             decoded_content = file_content.getvalue().decode(encoding)
@@ -92,7 +98,7 @@ class S3Reader:
             )
             return df
         elif file_type == "xlsx":
-            file_content, _ = aws_connector.s3_read_file(
+            file_content, _ = self._aws_connector.s3_read_file(
                 self._bucket, key=file_path, bytes_=True
             )
             xls = pd.ExcelFile(file_content)
@@ -103,12 +109,12 @@ class S3Reader:
                 df = pd.read_excel(file_content, sheet_name=None)
             return df
         elif file_type == "xml":
-            file_content, _ = aws_connector.s3_read_file(
+            file_content, _ = self._aws_connector.s3_read_file(
                 self._bucket, key=file_path, bytes_=False
             )
             return xmltodict.parse(file_content)
         elif file_type == "txt":
-            file_content, encoding = aws_connector.s3_read_file(
+            file_content, encoding = self._aws_connector.s3_read_file(
                 self._bucket, key=file_path, raw=True
             )
             return file_content, encoding
@@ -130,7 +136,10 @@ class S3Reader:
         if file_type == "csv":
             df_headers = []
             last_line = ""
-            for file_content, encoding in aws_connector.s3_read_file_by_chunks(
+            for (
+                file_content,
+                encoding,
+            ) in self._aws_connector.s3_read_file_by_chunks(
                 bucket=self._bucket,
                 chunk_size=chunk_size,
                 key=file_path,
