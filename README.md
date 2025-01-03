@@ -37,14 +37,14 @@ Some examples on how to use the library.
 An example of how to use the reader module.
 
 ```python
-from aws_handler import S3Reader
+from aws_handler import S3Handler
 
 test_bucket = "my_bucket"
 test_keyword = "filename_*.xlsx"
-s3_reader = S3Reader(bucket=test_bucket)
-s3_files = s3_reader.retrieve_files(path="my_excel_files", keywords=[test_keyword])
+s3_handler = S3Handler(bucket=test_bucket)
+s3_files = s3_handler.retrieve_files(path="my_excel_files", keywords=[test_keyword])
 for file in s3_files[test_keyword]:
-    df_data = s3_reader.read_file(file_object=file)
+    df_data = s3_handler.read_file(file_object=file)
     print(df_data)
 ```
 
@@ -53,12 +53,12 @@ for file in s3_files[test_keyword]:
 An example of how to use the writer module.
 
 ```python
-from aws_handler import S3Writer
+from aws_handler import S3Handler
 
 test_bucket = "my_bucket"
 test_data = {"hello": "world"}
-s3_writer = S3Writer(bucket=test_bucket)
-s3_writer.write_json_to_s3(data=test_data, file_name="test.json", file_path="path/path")
+s3_handler = S3Handler(bucket=test_bucket)
+s3_handler.write_json_to_s3(data=test_data, file_name="test.json", file_path="path/path")
 ```
 
 ### Boto3 Connector

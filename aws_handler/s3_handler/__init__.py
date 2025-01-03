@@ -1,3 +1,2 @@
 # flake8: noqa
-from aws_handler.s3_handler.reader.reader import S3Reader
-from aws_handler.s3_handler.writer.writer import S3Writer
+from aws_handler.s3_handler.s3_handler import S3Handler
