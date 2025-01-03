@@ -11,8 +11,5 @@ class AwsConnector(AwsS3):
         Verify that the connection to AWS is successful.
 
         This method must be implemented by all subclasses.
-
-        Raises:
-            Exception: If the connection cannot be established.
         """
         pass

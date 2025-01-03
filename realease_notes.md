@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.0-beta.6] - 2025-01-03
+
+### Changed
+
+- Format changes.
+
+
 ## [v0.1.0-beta.5] - 2025-01-03
 
 ### Added
